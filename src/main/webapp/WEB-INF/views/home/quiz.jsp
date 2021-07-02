@@ -94,7 +94,7 @@
           <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/updates">What's New</a>
         </li>
          <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/favorites">Favorites List</a>
+          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/favourite">Favourite List</a>
         </li>
        <li class="nav-item" id="pageAdmin" style="display: none">
           <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/question">Admin</a>

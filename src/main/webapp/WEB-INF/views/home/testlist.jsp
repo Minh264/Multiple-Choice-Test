@@ -78,7 +78,7 @@ tr:nth-child(even) {
 					</li>
 					<li class="nav-item"><a class="nav-link" href="updates">What's
 							New</a></li>
-					<li class="nav-item"><a class="nav-link" href="favorites">Favorites
+					<li class="nav-item"><a class="nav-link" href="favourite">Favourite
 							List</a></li>
 					<li class="nav-item" id="pageAdmin" style="display: none"><a class="nav-link" href="question">Admin</a>
 					</li>
@@ -120,6 +120,7 @@ tr:nth-child(even) {
 							<th>Name</th>
 							<th>Time</th>
 							<th>Quantity</th>
+							<th></th>
 							<th></th>
 						</tr>
 					</table>
@@ -245,7 +246,7 @@ tr:nth-child(even) {
 										},
 										success : function(data) {
 											var trHTML = '';
-											$.each(data,function(i, item) {trHTML += '<tr><td>'+ item.id+ '</td><td>'+ item.name+ '</td><td>'+ item.time+ '</td><td>'+ item.quantity+ '</td><td><button id="btnstart" class="btn btn-primary" >Start</button></td></tr>';
+											$.each(data,function(i, item) {trHTML += '<tr><td>'+ item.id+ '</td><td>'+ item.name+ '</td><td>'+ item.time+ '</td><td>'+ item.quantity+ '</td><td><button id="btnstart" class="btn btn-primary" >Start</button></td><td><button id="btnPractice" class="btn btn-primary" >Practice</button></td></tr>';
 															});
 											$('#ftable').append(trHTML);
 										},
@@ -258,6 +259,11 @@ tr:nth-child(even) {
 			    let tr = $(this).closest('tr');
 			    let a = tr.find('td').eq(0).html(); 		   
 			    window.location.href = "http://localhost:8080/MultiChoose_02/home/quiz/"+a;
+			  });
+		 $(document ).on("click","#ftable #btnPractice",function() {
+			    let tr = $(this).closest('tr');
+			    let a = tr.find('td').eq(0).html(); 		   
+			    window.location.href = "http://localhost:8080/MultiChoose_02/home/practice/"+a;
 			  });
 	</script>
 	<script>

@@ -25,9 +25,35 @@
 <link rel="stylesheet" href="../assets/css/bootstrap.css">
 
 <link rel="stylesheet" href="../assets/css/mobster.css">
-
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<style>
+table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 100%;
+}
+
+td, th {
+	border: 1px solid #dddddd;
+	text-align: left;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #dddddd;
+}
+
+#myInput {
+	background-position: 10px 12px;
+	background-repeat: no-repeat;
+	width: 600px;
+	font-size: 16px;
+	padding: 12px 20px 12px 40px;
+	border: 1px solid #ddd;
+	margin-bottom: 12px;
+}
+</style>
 </head>
 <body>
 	<!-- Header -->
@@ -52,9 +78,9 @@
 					</li>
 					<li class="nav-item"><a class="nav-link" href="updates">What's
 							New</a></li>
-					<li class="nav-item"><a class="nav-link" href="favourite">Favourite
+					<li class="nav-item active"><a class="nav-link" href="favourite">Favourite
 							List</a></li>
-					<li class="nav-item active"><a class="nav-link" href="admin">Admin</a>
+					<li class="nav-item" id="pageAdmin" style="display: none"><a class="nav-link" href="question">Admin</a>
 					</li>
 				</ul>
 				<div class="ml-auto my-2 my-lg-0" id="tagLogin"></div>
@@ -71,16 +97,8 @@
 					<div
 						class="row justify-content-center align-items-center text-center h-100">
 						<div class="col-lg-6">
-							<h3 class="mb-4 fw-medium">Admin</h3>
-							<nav aria-label="breadcrumb">
-								<ol
-									class="breadcrumb breadcrumb-dark justify-content-center bg-transparent">
-									<li class="breadcrumb-item active " aria-current="page">Question</li>
-									<li class="breadcrumb-item "><a href="test">Test</a></li>
-									<li class="breadcrumb-item"><a href="account">Account</a></li>
-									<li class="breadcrumb-item"><a href="history">History</a></li>
-								</ol>
-							</nav>
+							<h3 class="mb-4 fw-medium">Favourite List</h3>
+							<nav aria-label="breadcrumb"></nav>
 						</div>
 					</div>
 				</div>
@@ -89,47 +107,27 @@
 
 		<div class="page-section">
 			<div class="container">
-				<div class="row justify-content-center">
-					<!--  -->
-					<div class="col-lg-10 my-3 wow fadeInUp">
-						<div class="card-page">
-							<div class="row row-beam-md " style="margin-left: 0px">
-								<div class="col-md-4 text-center py-3 py-md-2">
-									<p class="fg-primary fw-medium fs-vlarge">Questions
-										Management</p>
-									<p class="mb-0">Select insert or update to edit question</p>
-								</div>
-								<select id="btn" class="btn btn-primary" type="submit"
-									style="margin-top: 40px; margin-bottom: 40px"
-									onchange="onChanged(this)">
-									<option selected value="base">Please Select</option>
-									<option value="insert">Insert</option>
-									<option value="update">Update/Delete</option>
-								</select> <select id="btnselect" class="btn btn-primary" type="submit"
-									style="margin-top: 40px; margin-bottom: 40px; margin-left: 40px; display: none"
-									onchange="onChangedType(this)">
-									<option selected value="base">Select Types</option>
-									<option value="1">Toiec Part 1</option>
-									<option value="2">Toiec Part 2</option>
-									<option value="3">Toiec Part 3</option>
-									<option value="4">Toiec Part 4</option>
-									<option value="5">Toiec Part 5</option>
-									<option value="6">Toiec Part 6</option>
-									<option value="7">Toeic Part 7</option>
-									<option value="8">Fill Words</option>
-									<option value="9">Sorting</option>
-									<option value="10">True or False</option>
-									<option value="11">Photo</option>
-								</select>
-							</div>
-						</div>
-					</div>
-					<!-- Load -->
-					<div id="fload" style="display: none"></div>
+
+				<!--  -->
+				<div class="card-page">
+					<input type="text" id="myInput" onkeyup="myFunction()"
+						placeholder="Search for Type ID..." title="Type in a name">
+				</div>
+				<div class="card-page" id="fload">
+					<table id="ftable">
+						<tr>
+							<th>ID</th>
+							<th>Content</th>
+							<th>Type Name</th>
+							<th>Type ID</th>
+							<th>Level</th>
+							<th></th>
+							<th></th>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</div>
-
 	</main>
 	<!-- .bg-light -->
 
@@ -223,82 +221,85 @@
 	</div>
 
 
+
+
+
 	<script src="../assets/vendor/owl-carousel/js/owl.carousel.min.js"></script>
 
 	<script src="../assets/vendor/wow/wow.min.js"></script>
 
 	<script src="../assets/js/mobster.js"></script>
 	<script type="text/javascript">
+	var page = document.getElementById('pageAdmin');
 		$(document).ready(function() {
-							if (sessionStorage.getItem('username') == null) {
-								$('#tagLogin').append(' <button class="btn btn-dark rounded-pill" id ="btnlogin"><a class="nav-link" href="login">Login</a></button>');
-							} else if (sessionStorage.getItem('username') != null) {
-								 $('#tagLogin').append(' <div class="nav-item dropdown active"><a class="nav-link dropdown-toggle"  style="color: white" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Hello, '+ sessionStorage.getItem('username')+'</a><div class="dropdown-menu" aria-labelledby="navbarDropdown"><a class="dropdown-item" href="profile">Profile</a><a class="dropdown-item" href="login">Log Out</a></div></div>');
-							};
+			if (sessionStorage.getItem('username') == null){
+				$('#tagLogin').append(' <button class="btn btn-dark rounded-pill" id ="btnlogin"><a class="nav-link" href="login">Login</a></button>');
+			} else if (sessionStorage.getItem('username') !=null){		
+		        $('#tagLogin').append(' <div class="nav-item dropdown active"><a class="nav-link dropdown-toggle"  style="color: white" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Hello, '+ sessionStorage.getItem('username')+'</a><div class="dropdown-menu" aria-labelledby="navbarDropdown"><a class="dropdown-item" href="profile">Profile</a><a class="dropdown-item" href="login">Log Out</a></div></div>');	
+			};
+			if(sessionStorage.getItem('role')=='true'){			
+				page.setAttribute("style","display:inline");
+			}
+							$.ajax({
+										type : 'GET',
+										url : 'https://testing-api-1.herokuapp.com/api/question/getfavorite',
+										beforeSend : function(xhr) {xhr.setRequestHeader('Authorization','Bearer '+ sessionStorage.getItem('accessToken'));
+										},
+										success : function(data) {
+											var trHTML = '';
+											 $.each(data,function(v,k){
+												trHTML += '<tr><td>'+ k.question.id+ '</td><td>'+ k.question.content+ '</td><td>'+ k.question.type.name+ '</td><td>'+ k.question.type.id+ '</td><td>'+ k.question.level+ '</td><td><button id="btnReview" class="btn btn-primary" >Review</button></td><td><button id="btnDelete" class="btn btn-primary" >Delete</button></td></tr>';
+											});		 								
+										$('#ftable').append(trHTML);
+										},
+										error : function() {
+											alert("Load Failed!");
+										}
+									});
 						});
-		function onChanged(obj) {
-			var status = "";
-			var value = obj.value;
-			var select = document.getElementById('btnselect');
-			var form = document.getElementById('fload');
-			if (value == "insert") {
-				select
-						.setAttribute("style",
-								"margin-top: 40px;margin-bottom: 40px;margin-left: 40px;display:inline");
-				form.setAttribute("style", "display:inline");
-				form.innerHTML = "";
-			} else if (value == "update") {
-				select
-						.setAttribute("style",
-								"margin-top: 40px;margin-bottom: 40px;margin-left: 40px;display:none");
-				form.setAttribute("style", "display:inline");
-				$('#fload').load('update/updatequestion')
-			} else {
-				select
-						.setAttribute("style",
-								"margin-top: 40px;margin-bottom: 40px;margin-left: 40px;display:none");
-				form.setAttribute("style", "display:none");
-				form.innerHTML = "";
-			}
-		}
-		function onChangedType(obj) {
-			var value = obj.value;
-			if (value == "1") {
-				$('#fload').load('types/type1')
-			}
-			if (value == "2") {
-				$('#fload').load('types/type2')
-			}
-			if (value == "3") {
-				$('#fload').load('types/type3')
-			}
-			if (value == "4") {
-				$('#fload').load('types/type4')
-			}
-			if (value == "5") {
-				$('#fload').load('types/type5')
-			}
-			if (value == "6") {
-				$('#fload').load('types/type6')
-			}
-			if (value == "7") {
-				$('#fload').load('types/type7')
-			}
-			if (value == "8") {
-				$('#fload').load('types/type8')
-			}
-			if (value == "9") {
-				$('#fload').load('types/type9')
-			}
-			if (value == "10") {
-				$('#fload').load('types/type10')
-			}
-			if (value == "11") {
-				$('#fload').load('types/type11')
+		 $(document ).on("click","#ftable #btnReview",function() {
+			    let tr = $(this).closest('tr');
+			    let a = tr.find('td').eq(0).html(); 		   
+			    window.location.href = "http://localhost:8080/MultiChoose_02/home/review/"+a;
+			  });
+		 $(document ).on("click","#ftable #btnDelete",function() {
+			    let tr = $(this).closest('tr');
+			    let a = tr.find('td').eq(0).html(); 		   
+			    $.ajax({
+			    	type:'GET',
+			    	url: 'https://testing-api-1.herokuapp.com/api/question/deletefavorite/'+a,
+			    	beforeSend : function(xhr) {
+			    		xhr.setRequestHeader('Authorization','Bearer '+ sessionStorage.getItem('accessToken'));
+					},
+					success: function(data){
+						alert(data.message);
+						window.location.href ="http://localhost:8080/MultiChoose_02/home/favourite";
+					},
+					error : function(){
+						alert("Delete Failed !");
+					}
+			    });
+			  });
+	</script>
+	<script>
+		function myFunction() {
+			var input, filter, table, tr, td, i, txtValue;
+			input = document.getElementById("myInput");
+			filter = input.value.toUpperCase();
+			table = document.getElementById("ftable");
+			tr = table.getElementsByTagName("tr");
+			for (i = 0; i < tr.length; i++) {
+				td = tr[i].getElementsByTagName("td")[3];
+				if (td) {
+					txtValue = td.textContent || td.innerText;
+					if (txtValue.toUpperCase().indexOf(filter) > -1) {
+						tr[i].style.display = "";
+					} else {
+						tr[i].style.display = "none";
+					}
+				}
 			}
 		}
 	</script>
-
 </body>
-
 </html>

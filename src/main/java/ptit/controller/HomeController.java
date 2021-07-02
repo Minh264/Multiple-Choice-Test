@@ -63,6 +63,11 @@ public class HomeController {
 
 		return "home/quiz";
 	}
+	@RequestMapping("home/practice/{ID}")
+	public String practice(ModelMap model) {
+
+		return "home/practice";
+	}
 	@RequestMapping("home/testlist")
 	public String testlist(ModelMap model) {
 
@@ -72,6 +77,16 @@ public class HomeController {
 	public String result(ModelMap model) {
 
 		return "home/result";
+	}
+	@RequestMapping("home/favourite")
+	public String favourite(ModelMap model) {
+
+		return "home/favourite";
+	}
+	@RequestMapping("home/review/{ID}")
+	public String review(ModelMap model) {
+
+		return "home/review";
 	}
 	//Insert Question
 	@RequestMapping("home/types/type1")

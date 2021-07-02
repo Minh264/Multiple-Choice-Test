@@ -52,7 +52,7 @@
           <a class="nav-link" href="updates">What's New</a>
         </li>
          <li class="nav-item">
-          <a class="nav-link" href="favorites">Favorites List</a>
+          <a class="nav-link" href="favourite">Favourite List</a>
         </li>
         <li class="nav-item active">
           <a class="nav-link" href="admin">Admin</a>
