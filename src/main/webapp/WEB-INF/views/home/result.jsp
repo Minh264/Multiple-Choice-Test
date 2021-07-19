@@ -77,17 +77,8 @@
        <li class="nav-item ">
           <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/index">Home</a>
         </li>
-        <li class="nav-item ">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/about">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/blog">Blog</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/updates">What's New</a>
-        </li>
          <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/favourite">Favourite List</a>
+          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/favorite">Favorite List</a>
         </li>
        <li class="nav-item" id="pageAdmin" style="display: none">
           <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/question">Admin</a>
@@ -118,7 +109,12 @@
     <div class="container">
         <div class="card-page" >
 				<div role="main" class="form-all" id="fload">    
-  </div> 
+  				</div> 
+  				<div style="text-align:center" data-align="center" class="form-buttons-wrapper form-buttons-center   jsTest-button-wrapperField">
+          <a href="http://localhost:8080/MultiChoose_02/home/testlist"> <button id="btnSend" type="submit" class="form-submit-button submit-button jf-form-buttons jsTest-submitField" data-component="button" data-content="">
+              Back
+            </button></a>       
+          </div>
 			</div>
       </div>
     </div>

@@ -25,6 +25,7 @@
   <link rel="stylesheet" href="../assets/css/mobster.css">
   <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<style>
 table {
 	font-family: arial, sans-serif;
@@ -69,17 +70,8 @@ tr:nth-child(even) {
        <li class="nav-item ">
           <a class="nav-link" href="index">Home</a>
         </li>
-        <li class="nav-item ">
-          <a class="nav-link" href="about">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="blog">Blog</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="updates">What's New</a>
-        </li>
          <li class="nav-item">
-          <a class="nav-link" href="favourite">Favourite List</a>
+          <a class="nav-link" href="favorite">Favorite List</a>
         </li>
         <li class="nav-item active">
           <a class="nav-link" href="admin">Admin</a>
@@ -235,7 +227,7 @@ $(document).ready(function() {
 $(document).ready(function() {
 	$.ajax({
 		type : 'GET',
-		url : 'https://testing-api-1.herokuapp.com/api/listuser',
+		url : sessionStorage.getItem('API')+'listuser',
 		beforeSend: function (xhr) {
 		    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 		},
@@ -246,15 +238,19 @@ $(document).ready(function() {
 	        });
 	        $('#ftable').append(trHTML);
 		},
-		error : function() {				
-			alert("Create Failed!");
+		error : function(data) {				
+			swal({
+				title : data.responseJSON.message,
+				text : "",
+				icon : "error"
+			}); 
 		}
 	});
 });
 	$(document ).on("click","#ftable #btnSetAdmin",function() {
     let tr = $(this).closest('tr');
     let id = tr.find('td').eq(0).html(); 
-    	var res="https://testing-api-1.herokuapp.com/api/setadmin/";
+    	var res= sessionStorage.getItem('API')+"setadmin/";
     	var urls = res.concat(id);
     	 $.ajax({
     		type : 'GET',
@@ -263,33 +259,57 @@ $(document).ready(function() {
 			    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 			},
     		success : function(data) {			
-    			alert(data.message);
-    			window.location.href = "http://localhost:8080/MultiChoose_02/home/account";
+    			swal({
+					title : data.message,
+					text : "",
+					icon : "success"
+				}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/account"});
     		},
     		error : function(data) {				
-    			alert("Delete Failed!");
+    			swal({
+					title : data.responseJSON.message,
+					text : "",
+					icon : "error"
+				}); 
     		}
     });  
   });
 	$(document ).on("click","#ftable #btnRemoveAdmin",function() {
-	    let tr = $(this).closest('tr');
-	    let id = tr.find('td').eq(0).html(); 
-	    	var res="https://testing-api-1.herokuapp.com/api/removeadmin/";
-	    	var urls = res.concat(id);
-	    	 $.ajax({
-	    		type : 'GET',
-	    		url : urls,
-	    		beforeSend: function (xhr) {
-				    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
-				},
-	    		success : function(data) {			
-	    			alert(data.message);
-	    			window.location.href = "http://localhost:8080/MultiChoose_02/home/account";
-	    		},
-	    		error : function(data) {				
-	    			alert("Delete Failed!");
-	    		}
-	    });  
+		swal({
+			title : "Are you sure you want to delete this question?",
+			text : "",
+			icon : "warning",
+			buttons : true,
+			dangerMode: true,
+		}).then((willDelete)=>{
+			if(willDelete){
+				let tr = $(this).closest('tr');
+			    let id = tr.find('td').eq(0).html(); 
+			    	var res= sessionStorage.getItem('API')+"removeadmin/";
+			    	var urls = res.concat(id);
+			    	 $.ajax({
+			    		type : 'GET',
+			    		url : urls,
+			    		beforeSend: function (xhr) {
+						    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
+						},
+			    		success : function(data) {			
+			    			swal({
+								title : data.message,
+								text : "",
+								icon : "success"
+							}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/account"})
+			    		},
+			    		error : function(data) {				
+			    			 swal({
+									title : data.responseJSON.message,
+									text : "",
+									icon : "error"
+								}); 
+			    		}
+			    });  
+			}
+		})				    
 	  });	
 	function myFunction() {
 		  var input, filter, table, tr, td, i, txtValue;

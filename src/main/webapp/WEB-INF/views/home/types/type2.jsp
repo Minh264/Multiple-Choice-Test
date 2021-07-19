@@ -7,6 +7,7 @@
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>	
 	
 </head>
 <body>
@@ -54,7 +55,7 @@
 		var formData = new FormData();		
 			$('#btnsend').on('click',function(){
 				if($answer.val()=='base' || $level.val()=='base' || $description.val()=="" || $('#audiofile')[0].files[0]==null){
-					alert("Please enter full information!");
+					swal("Please enter full information !","","error");
 				};
 				if($answer.val()!='base' && $level.val()!='base' && $description.val()!="" && $('#audiofile')[0].files[0] !=null){
 					var values = JSON.stringify({
@@ -69,7 +70,7 @@
 					formData.append('audio',$('#audiofile')[0].files[0]);
 					$.ajax({
 					type : 'POST',
-					url : 'https://testing-api-1.herokuapp.com/api/question/type2',
+					url : sessionStorage.getItem('API')+'question/type2',
 					beforeSend: function (xhr) {
 					    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 					},
@@ -78,11 +79,18 @@
 					processData: false,
 			        contentType: false,
 					success : function(data) {			
-						alert(data.message);
-						window.location.href = "http://localhost:8080/MultiChoose_02/home/question";
+						swal({
+							title : data.message,
+							text : "",
+							icon : "success"
+						}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/question"})
 					},
-					error : function() {				
-						alert("Create Failed!");
+					error : function(data) {				
+						swal({
+							title : data.responseJSON.message,
+							text : "",
+							icon : "error"
+						}); 
 					}
 				});
 				};			

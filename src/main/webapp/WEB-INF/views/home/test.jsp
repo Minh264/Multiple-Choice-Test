@@ -42,17 +42,8 @@
        <li class="nav-item ">
           <a class="nav-link" href="index">Home</a>
         </li>
-        <li class="nav-item ">
-          <a class="nav-link" href="about">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="blog">Blog</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="updates">What's New</a>
-        </li>
          <li class="nav-item">
-          <a class="nav-link" href="favourite">Favourite List</a>
+          <a class="nav-link" href="favorite">Favorite List</a>
         </li>
         <li class="nav-item active">
           <a class="nav-link" href="admin">Admin</a>

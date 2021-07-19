@@ -7,7 +7,7 @@
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
 	<!-- Header -->
@@ -81,7 +81,7 @@
 		var formData = new FormData();		
 			$('#btnsend').on('click',function(){
 				if($content.val()=="" || $description.val()=="" || $level.val()=='base' || $descriptionAnswer.val()=="" || $answer.val()=='base' || $answera.val()=="" || $answerb.val()=="" || $answerc.val()==""|| $answerd.val()=="" || $('#imagefile')[0].files[0]==null){
-					alert("Please enter full information !");
+					swal("Please enter full information !","","error");
 				};
 				if($content.val()!="" && $description.val()!="" && $level.val()!='base' && $descriptionAnswer.val()!="" && $answer.val()!='base' && $answera.val()!="" && $answerb.val()!="" && $answerc.val()!=""&& $answerd.val()!="" && $('#imagefile')[0].files[0]!=null){
 					var details ={
@@ -105,7 +105,7 @@
 						formData.append('photo',$('#imagefile')[0].files[0]);
 						$.ajax({
 						type : 'POST',
-						url : 'https://testing-api-1.herokuapp.com/api/question/type11',
+						url : sessionStorage.getItem('API')+'question/type11',
 						beforeSend: function (xhr) {
 						    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 						},
@@ -114,11 +114,18 @@
 						processData: false,
 				        contentType: false,
 						success : function(data) {			
-							alert(data.message);
-							window.location.href = "http://localhost:8080/MultiChoose_02/home/question";
+							swal({
+								title : data.message,
+								text : "",
+								icon : "success"
+							}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/question"})
 						},
 						error : function(data) {				
-							alert("Create Failed !");
+							swal({
+								title : data.responseJSON.message,
+								text : "",
+								icon : "error"
+							}); 
 						}
 					});
 				};				

@@ -31,6 +31,7 @@
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
   <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<style type="text/css">
     .form-label-left{
         width:150px;
@@ -84,17 +85,8 @@
        <li class="nav-item ">
           <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/index">Home</a>
         </li>
-        <li class="nav-item ">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/about">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/blog">Blog</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/updates">What's New</a>
-        </li>
          <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/favourite">Favourite List</a>
+          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/favorite">Favorite List</a>
         </li>
        <li class="nav-item" id="pageAdmin" style="display: none">
           <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/question">Admin</a>
@@ -130,7 +122,7 @@
         <div class="form-header-group  header-default">
           <div class="header-text httal htvam">
             <h2 id="header_7" class="form-header" data-component="header">
-              Favourite Question
+              Favorite Question
             </h2>
           </div>
         </div>
@@ -142,7 +134,7 @@
       <li class="form-line" data-type="control_button" id="id_2">
         <div id="cid_2" class="form-input-wide">
           <div style="text-align:center" data-align="center" class="form-buttons-wrapper form-buttons-center   jsTest-button-wrapperField">
-          <a href="http://localhost:8080/MultiChoose_02/home/favourite"> <button id="btnSend" type="submit" class="form-submit-button submit-button jf-form-buttons jsTest-submitField" data-component="button" data-content="">
+          <a href="http://localhost:8080/MultiChoose_02/home/favorite"> <button id="btnSend" type="submit" class="form-submit-button submit-button jf-form-buttons jsTest-submitField" data-component="button" data-content="">
               Back
             </button></a>          
           </div>
@@ -252,7 +244,7 @@ $(document).ready(function() {
 	}
 	  $.ajax({
 		type : 'GET',
-		url : 'https://testing-api-1.herokuapp.com/api/question/update?id='+id,
+		url : sessionStorage.getItem('API')+'question/update?id='+id,
 		beforeSend: function (xhr) {
 		    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 		},
@@ -341,8 +333,12 @@ $(document).ready(function() {
 	        	});        	
 	        } 
 		},
-		error : function() {				
-			alert("Load Failed!");
+		error : function(data) {				
+			swal({
+				title : data.responseJSON.message,
+				text : "",
+				icon : "error"
+			}); 
 		}
 	});  	
 });

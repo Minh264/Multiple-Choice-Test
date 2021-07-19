@@ -23,11 +23,6 @@ public class HomeController {
 
 		return "home/profile";
 	}
-	@RequestMapping("mctest")
-	public String mt(ModelMap model) {
-
-		return "mctest";
-	}
 	@RequestMapping("home/question")
 	public String question(ModelMap model) {
 
@@ -78,15 +73,20 @@ public class HomeController {
 
 		return "home/result";
 	}
-	@RequestMapping("home/favourite")
-	public String favourite(ModelMap model) {
+	@RequestMapping("home/favorite")
+	public String favorite(ModelMap model) {
 
-		return "home/favourite";
+		return "home/favorite";
 	}
 	@RequestMapping("home/review/{ID}")
 	public String review(ModelMap model) {
 
 		return "home/review";
+	}
+	@RequestMapping("home/changepw")
+	public String changepw(ModelMap model) {
+
+		return "home/changepw";
 	}
 	//Insert Question
 	@RequestMapping("home/types/type1")

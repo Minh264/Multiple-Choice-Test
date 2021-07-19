@@ -24,6 +24,7 @@
 
   <link rel="stylesheet" href="../assets/css/mobster.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <style>
 body {
 	margin: 0;
@@ -227,15 +228,6 @@ a {
          <li class="nav-item">
           <a class="nav-link" href="index">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="about">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="blog">Blog</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="updates">What's New</a>
-        </li>
       </ul>
       <div class="ml-auto my-2 my-lg-0">
         <button class="btn btn-dark rounded-pill"><a class="nav-link" href="login">Login</a></button>
@@ -278,8 +270,8 @@ a {
 							type="text" class="input">
 					</div>					
 					<div class="group">
-
 						<button name="btnSignIn" class="button" id="btnsend">Send</button>
+						<a href="login"><button class="button" >Back</button></a>
 					</div>
 					<div class="hr"></div>
 				</div>
@@ -383,11 +375,18 @@ a {
 					type : 'GET',
 					url : 'https://testing-api-1.herokuapp.com/api/user/resetpassword?email='+ $('#email').val(),				
 					success : function(data) {							
-						alert(data.message);
-						window.location.href = "http://localhost:8080/MultiChoose_02/home/login";
+						swal({
+							title : data.message,
+							text : "",
+							icon : "success"
+						}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/login"})
 					},
-					error : function() {
-						alert("Login Failed!");
+					error : function(data) {
+						 swal({
+								title : data.responseJSON.message,
+								text : "",
+								icon : "error"
+							}); 
 					}
 				}); 
 			});			

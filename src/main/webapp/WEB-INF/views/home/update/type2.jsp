@@ -7,7 +7,7 @@
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
 	<!-- Header -->
@@ -43,6 +43,7 @@
 		</div>
 		<div class="form-group mt-4">
 			<button class="btn btn-primary" id="btnsend">Send Question</button>
+			<a href="question" style="margin-left: 100px"><button class="btn btn-primary">Back</button></a>
 		</div>
 	</div>
 	<script>
@@ -52,7 +53,7 @@
 	var idtype;
 	var typeName;
 	$(document).ready(function(){
-		    	var res="https://testing-api-1.herokuapp.com/api/question/update?id=";
+		    	var res= sessionStorage.getItem('API')+"question/update?id=";
 		    	var urls = res.concat(id);
 		    	 $.ajax({
 		    		type : 'GET',
@@ -77,7 +78,11 @@
 	                    });			
 		    		},
 		    		error : function(data) {				
-		    			alert("Delete Failed!");
+		    			swal({
+							title : data.responseJSON.message,
+							text : "",
+							icon : "error"
+						}); 
 		    		}
 		    });  
 		    	 var $answer = $('#btnanswer');
@@ -86,7 +91,7 @@
 		 		var formData = new FormData();		
 		 			$('#btnsend').on('click',function(){
 		 				if($answer.val()=='base' || $level.val()=='base' || $description.val()==""){
-		 					alert('Please enter full information !');
+		 					swal("Please enter full information !","","error");
 		 				};
 		 				if($answer.val()!='base' && $level.val()!='base' && $description.val()!=""){
 		 					if($('#audiofile')[0].files[0] != null){
@@ -111,7 +116,7 @@
 			 				formData.append('audio',fileAudio);
 			 				$.ajax({
 			 				type : 'POST',
-			 				url : 'https://testing-api-1.herokuapp.com/api/question/update',
+			 				url : sessionStorage.getItem('API')+'question/update',
 			 				beforeSend: function (xhr) {
 			 				    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 			 				},
@@ -120,11 +125,18 @@
 			 				processData: false,
 			 		        contentType: false,
 			 				success : function(data) {			
-			 					alert(data.message);
-			 					window.location.href = "http://localhost:8080/MultiChoose_02/home/question";
+			 					swal({
+									title : data.message,
+									text : "",
+									icon : "success"
+								}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/question"})
 			 				},
-			 				error : function() {				
-			 					alert("Create Failed!");
+			 				error : function(data) {				
+			 					swal({
+									title : data.responseJSON.message,
+									text : "",
+									icon : "error"
+								}); 
 			 				}
 			 			});
 		 				};		 				

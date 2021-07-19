@@ -27,6 +27,7 @@
 <link rel="stylesheet" href="../assets/css/mobster.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <style>
 table {
 	font-family: arial, sans-serif;
@@ -71,14 +72,8 @@ tr:nth-child(even) {
 			<div class="collapse navbar-collapse" id="navbarToggler">
 				<ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 					<li class="nav-item "><a class="nav-link" href="index">Home</a>
-					</li>
-					<li class="nav-item "><a class="nav-link" href="about">About</a>
-					</li>
-					<li class="nav-item"><a class="nav-link" href="blog">Blog</a>
-					</li>
-					<li class="nav-item"><a class="nav-link" href="updates">What's
-							New</a></li>
-					<li class="nav-item"><a class="nav-link" href="favourite">Favourite
+					</li>		
+					<li class="nav-item"><a class="nav-link" href="favorite">Favorite
 							List</a></li>
 					<li class="nav-item" id="pageAdmin" style="display: none"><a class="nav-link" href="question">Admin</a>
 					</li>
@@ -241,7 +236,7 @@ tr:nth-child(even) {
 			}
 							$.ajax({
 										type : 'GET',
-										url : 'https://testing-api-1.herokuapp.com/api/test',
+										url : sessionStorage.getItem('API')+'test',
 										beforeSend : function(xhr) {xhr.setRequestHeader('Authorization','Bearer '+ sessionStorage.getItem('accessToken'));
 										},
 										success : function(data) {
@@ -250,8 +245,13 @@ tr:nth-child(even) {
 															});
 											$('#ftable').append(trHTML);
 										},
-										error : function() {
-											alert("Create Failed!");
+										error : function(data) {
+											swal({
+												title : data.responseJSON.message,
+												text : "",
+												icon : "error"
+											}); 
+
 										}
 									});
 						});

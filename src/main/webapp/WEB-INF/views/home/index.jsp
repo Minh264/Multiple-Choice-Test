@@ -42,14 +42,8 @@
          <li class="nav-item">
           <a class="nav-link" href="index">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link"  href="about">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="updates">What's New</a>
-        </li>
-         <li class="nav-item">
-          <a class="nav-link" href="favourite">Favourite List</a>
+         <li class="nav-item" id="pageFavorite" style="display: none">
+          <a class="nav-link" href="favorite">Favorite List</a>
         </li>
         <li class="nav-item" id="pageAdmin" style="display: none">
           <a class="nav-link" href="question">Admin</a>
@@ -69,7 +63,7 @@
         <div class="col-lg-6 wow fadeInUp">
           <h1 class="mb-4">Multiple Choice Test</h1>
           <p class="mb-4">Pratice Makes Perfect </p>
-          <a href="testlist" class="btn btn-primary rounded-pill">Start Test</a>
+          <a id="start" href="testlist" class="btn btn-primary rounded-pill">Start Test</a>
         </div>
         <div class="col-lg-6 d-none d-lg-block wow zoomIn">
           <div class="img-place mobile-preview shadow floating-animate">
@@ -170,8 +164,12 @@
 	$(document).ready(function() {
 		if (sessionStorage.getItem('username') == null){
 			$('#tagLogin').append(' <button class="btn btn-dark rounded-pill" id ="btnlogin"><a class="nav-link" href="login">Login</a></button>');
-		} else if (sessionStorage.getItem('username') !=null){		
+			$('#start').attr("href","http://localhost:8080/MultiChoose_02/home/login");
+			
+		} else if (sessionStorage.getItem('username') !=null){	
+			$('#pageFavorite').attr("style","display:inline");
 	        $('#tagLogin').append(' <div class="nav-item dropdown active"><a class="nav-link dropdown-toggle"  style="color: white" href="#" id="navbarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Hello, '+ sessionStorage.getItem('username')+'</a><div class="dropdown-menu" aria-labelledby="navbarDropdown"><a class="dropdown-item" href="profile">Profile</a><a class="dropdown-item" href="login">Log Out</a></div></div>');	
+	        $('#start').attr("href","testlist");
 		};
 		if(sessionStorage.getItem('role')=='true'){			
 			page.setAttribute("style","display:inline");

@@ -7,7 +7,7 @@
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
 	<!-- Header -->
@@ -31,6 +31,7 @@
 		</div>
 		<div class="form-group mt-4">
 			<button class="btn btn-primary" id="btnsend">Send Question</button>
+			<a href="test" style="margin-left: 100px"><button class="btn btn-primary"  >Back</button></a>
 		</div>
 	</div>
 	<script>
@@ -46,7 +47,7 @@
 			$('#fmain').append('<div id="'+idf+'"><label for="name" class="fw-medium fg-grey" id="lbID"></label><div class="form-group"><select id="btntypes" class="btn btn-primary"><option selected value="base">Types</option><option value="1">Toiec Part 1</option><option value="2">Toiec Part 2</option><option value="3">Toiec Part 3</option><option value="4">Toiec Part 4</option><option value="5">Toiec Part 5</option><option value="6">Toiec Part 6</option><option value="7">Toeic Part 7</option><option value="8">Fill Words</option><option value="9">Sorting</option><option value="10">True or False</option><option value="11">Photo</option></select></div><div class="form-group"><select id="btnlevel" class="btn btn-primary"><option selected value="base">Level</option><option value="1">Easy</option><option value="2">Normal</option><option value="3">Hard</option></select></div><div class="form-group"><label for="name" class="fw-medium fg-grey">Quantity</label> <input type="number" class="form-control" id="quantity"></div></div>');
 		}
 	$(document).ready(function(){
-		    	var res="https://testing-api-1.herokuapp.com/api/test/update/";
+		    	var res= sessionStorage.getItem('API')+"test/update/";
 		    	var urls = res.concat(id);
 		    	 $.ajax({
 		    		type : 'GET',
@@ -55,9 +56,10 @@
 					    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 					},
 		    		success : function(data) {
+		    			console.log(data);
 		    			$('#name').val(data.name);
 		    			$('#time').val(data.time);
-		    			$.each(data.details, function(i, k) {
+		    			$.each(data.details, function(i, k) {	    				
 		    				 append_jquery();
 		    				 $('#' + ids[i]).find('#lbID').text(k.id);
 							$("#" + ids[i]).find("#btntypes").val(k.typeid);
@@ -66,7 +68,11 @@
 						});  		
 		    		},
 		    		error : function(data) {				
-		    			alert("Delete Failed!");
+		    			 swal({
+								title : data.responseJSON.message,
+								text : "",
+								icon : "error"
+							}); 
 		    		}
 		    }); 
 			var $name = $('#name');
@@ -75,11 +81,11 @@
 			$('#btnsend').on('click', function() {
 				var check = 0;
 				if($name.val()=="" || $time.val() =="" || ids.length == 0){
-					alert("Please enter full information !");
+					swal("Please enter full information !","","error");
 				};
 				$.each(ids,function(i,v){
 					if($("#" + ids[i]).find("#btntypes").val()=='base' || $("#" + ids[i]).find("#btnlevel").val()=='base' || $("#" + ids[i]).find("#quantity").val()==""){
-						alert("Please enter full information in Details location "+ i );
+						swal("Please enter full information in Details location "+ i ,"","error");
 						check += 1;
 					}
 				});
@@ -122,18 +128,25 @@
 					});			
 					 $.ajax({
 						type : 'POST',
-						url : 'https://testing-api-1.herokuapp.com/api/test/update/'+id,
+						url : sessionStorage.getItem('API')+'test/update/'+id,
 						beforeSend: function (xhr) {
 						    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 						},
 						data : values,
 						contentType : 'application/json',
 						success : function(data) {
-							alert(data.message);
-							window.location.href = "http://localhost:8080/MultiChoose_02/home/test";
+							swal({
+								title : data.message,
+								text : "",
+								icon : "success"
+							}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/test"})
 						},
-						error : function() {
-							alert("Create Failed!");
+						error : function(data) {
+							 swal({
+									title : data.responseJSON.message,
+									text : "",
+									icon : "error"
+								}); 
 						}
 					}); 
 				};			  

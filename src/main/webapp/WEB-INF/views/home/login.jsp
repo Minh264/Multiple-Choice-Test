@@ -24,6 +24,7 @@
 
   <link rel="stylesheet" href="../assets/css/mobster.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <style>
 body {
 	margin: 0;
@@ -227,15 +228,6 @@ a {
          <li class="nav-item">
           <a class="nav-link" href="index">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="about">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="blog">Blog</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="updates">What's New</a>
-        </li>
       </ul>
       <div class="ml-auto my-2 my-lg-0">
         <button class="btn btn-dark rounded-pill"><a class="nav-link" href="login">Login</a></button>
@@ -414,7 +406,7 @@ a {
 
 </body>
 <script>
-$(document).ready(function() {
+$(document).ready(function() {	
 	sessionStorage.clear();
 });
 </script>
@@ -433,8 +425,7 @@ $(document).ready(function() {
 					url : 'https://testing-api-1.herokuapp.com/api/auth/signin',
 					data : JSON.stringify({
 						usernameOrEmail : $usersi.val(),
-						password : $passsi.val()
-				
+						password : $passsi.val()			
 					}),
 					headers : {
 						'Accept' : 'application/json',
@@ -442,6 +433,7 @@ $(document).ready(function() {
 					},
 					success : function(data) {
 						sessionStorage.setItem('accessToken',data.accessToken);
+						sessionStorage.setItem('API',"https://testing-api-1.herokuapp.com/api/");
 						console.log(sessionStorage.getItem('accessToken'));
 						$.ajax({
 							type:'GET',
@@ -456,11 +448,20 @@ $(document).ready(function() {
 								console.log(sessionStorage.getItem('role'));
 							}
 						});
-						alert("Login Success !");
-						window.location.href = "http://localhost:8080/MultiChoose_02/home/index";
+						console.log(data);
+						swal({
+							title : "Login Success !",
+							text : "",
+							icon : "success"
+						}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/index"});		
+						
 					},
-					error : function() {
-						alert("Login Failed!");
+					error : function(data) {
+						swal({
+							title : data.responseJSON.message,
+							text : "",
+							icon : "error"
+						});
 					}
 				});
 			});
@@ -481,10 +482,18 @@ $(document).ready(function() {
 						'Content-Type' : 'application/json'
 					},
 					success : function(data) {
-						alert(data.message);
+						swal({
+							title : data.message,
+							text : "",
+							icon : "success"
+						}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/login"})
 					},
-					error : function() {
-						alert("Sign Up That Bai!");
+					error : function(data) {
+						 swal({
+							title : data.responseJSON.message,
+							text : "",
+							icon : "error"
+						}); 
 					}
 				});
 			});

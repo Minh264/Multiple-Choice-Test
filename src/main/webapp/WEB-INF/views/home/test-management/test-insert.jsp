@@ -7,7 +7,7 @@
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
 	<!-- Header -->
@@ -50,11 +50,11 @@
 			$('#btnsend').on('click', function() {
 				var check = 0;
 				if($name.val()=="" || $time.val() =="" || ids.length == 0){
-					alert("Please enter full information !");
+					swal("Please enter full information !","","error");
 				};
 				$.each(ids,function(i,v){
 					if($("#" + ids[i]).find("#btntypes").val()=='base' || $("#" + ids[i]).find("#btnlevel").val()=='base' || $("#" + ids[i]).find("#quantity").val()==""){
-						alert("Please enter full information in Details location "+ i );
+						swal("Please enter full information in Details location "+ i,"","error" );
 						check += 1;
 					}
 				});
@@ -95,18 +95,25 @@
 					});			
 					 $.ajax({
 						type : 'POST',
-						url : 'https://testing-api-1.herokuapp.com/api/test',
+						url : sessionStorage.getItem('API')+'test',
 						beforeSend: function (xhr) {
 						    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 						},
 						data : values,
 						contentType : 'application/json',
 						success : function(data) {
-							alert(data.message);
-							window.location.href = "http://localhost:8080/MultiChoose_02/home/test";
+							swal({
+								title : data.message,
+								text : "",
+								icon : "success"
+							}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/test"})
 						},
-						error : function() {
-							alert("Create Failed!");
+						error : function(data) {
+							swal({
+								title : data.responseJSON.message,
+								text : "",
+								icon : "error"
+							}); 
 						}
 					});  
 					

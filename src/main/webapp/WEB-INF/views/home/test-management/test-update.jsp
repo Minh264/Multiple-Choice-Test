@@ -7,6 +7,7 @@
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <style>
 table {
 	font-family: arial, sans-serif;
@@ -55,19 +56,23 @@ tr:nth-child(even) {
 	$(document).ready(function() {
 		$.ajax({
 			type : 'GET',
-			url : 'https://testing-api-1.herokuapp.com/api/test',
+			url : sessionStorage.getItem('API')+'test',
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 			},
 			success : function(data) {			
 				var trHTML = '';
 		        $.each(data, function (i, item) {	        	
-		        		 trHTML += '<tr><td>' + item.id + '</td><td>'+ item.name + '</td><td>' + item.time + '</td><td>'+ item.quantity + '</td><td><button id="btnupdate" class="btn btn-primary" >Update</button></td><td><button id="btndelete" class="btn btn-primary" >Delete</button></td></tr>';	      	        	          
+		        		 trHTML += '<tr><td>' + item.id + '</td><td>'+ item.name + '</td><td>' + item.time + '</td><td>'+ item.quantity + '</td><td><button id="btnupdate" class="btn btn-primary" >Update</button></td><td><button id="btndelete" class="btn btn-primary" style="background-color: red">Delete</button></td></tr>';	      	        	          
 		        });
 		        $('#ftable').append(trHTML);
 			},
-			error : function() {				
-				alert("Create Failed!");
+			error : function(data) {				
+				 swal({
+						title : data.responseJSON.message,
+						text : "",
+						icon : "error"
+					}); 
 			}
 		});
 	});
@@ -75,24 +80,41 @@ tr:nth-child(even) {
 <script>
 $(function () {
 	 $(document ).on("click","#ftable #btndelete",function() {
-		    let tr = $(this).closest('tr');
-		    let a = tr.find('td').eq(0).html(); 
-		    	var res="https://testing-api-1.herokuapp.com/api/test/delete/";
-		    	var urls = res.concat(a);
-		    	 $.ajax({
-		    		type : 'GET',
-		    		url : urls,
-		    		beforeSend: function (xhr) {
-					    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
-					},
-		    		success : function(data) {			
-		    			alert(data.message);
-		    			window.location.href = "http://localhost:8080/MultiChoose_02/home/test";
-		    		},
-		    		error : function(data) {				
-		    			alert("Delete Failed!");
-		    		}
-		    });  
+		 swal({
+				title : "Are you sure you want to delete this question?",
+				text : "",
+				icon : "warning",
+				buttons : true,
+				dangerMode: true,
+			}).then((willDelete)=>{
+				if(willDelete){
+					let tr = $(this).closest('tr');
+				    let a = tr.find('td').eq(0).html(); 
+				    	var res= sessionStorage.getItem('API')+"test/delete/";
+				    	var urls = res.concat(a);
+				    	 $.ajax({
+				    		type : 'GET',
+				    		url : urls,
+				    		beforeSend: function (xhr) {
+							    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
+							},
+				    		success : function(data) {			
+				    			swal({
+									title : data.message,
+									text : "",
+									icon : "success"
+								}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/test"})
+				    		},
+				    		error : function(data) {				
+				    			 swal({
+										title : data.responseJSON.message,
+										text : "",
+										icon : "error"
+									}); 
+				    		}
+				    });   
+				}
+			})		    
 		  });
 	 $(document ).on("click","#ftable #btnupdate",function() {
 		    let tr = $(this).closest('tr');

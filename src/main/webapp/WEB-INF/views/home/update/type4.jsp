@@ -7,7 +7,7 @@
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
 	<!-- Header -->
@@ -39,6 +39,7 @@
 			<div class="form-group mt-4">
 				<button  class="btn btn-primary" id="btnsend">Send
 					Question</button>
+					<a href="question" style="margin-left: 100px"><button class="btn btn-primary">Back</button></a>
 			</div>
 	</div>
 	<script>
@@ -55,7 +56,7 @@
 		$('#fmain').append('<div id="'+idf+'"><label for="message" class="fw-medium fg-grey" id ="lbID"></label><div class="form-group"><select id="btnanswer" class="btn btn-primary" ><option selected value="base">Answer</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select> </div><div class="form-group"><label for="message" class="fw-medium fg-grey">Description Answer</label><textarea rows="3" class="form-control" id="descriptionAnswer"></textarea></div><div class="form-group"><label for="message" class="fw-medium fg-grey">Content</label><textarea rows="3" class="form-control" id="content"></textarea></div> <div class="form-group"><label for="name" class="fw-medium fg-grey">A:</label><input type="text" class="form-control" id="answera"></div><div class="form-group"><label for="name" class="fw-medium fg-grey">B:</label><input type="text" class="form-control" id="answerb"></div><div class="form-group"><label for="name" class="fw-medium fg-grey">C:</label><input type="text" class="form-control" id="answerc"></div> <div class="form-group"><label for="name" class="fw-medium fg-grey">D:</label><input type="text" class="form-control" id="answerd"></div></div>');
 	}
 	$(document).ready(function() {
-		var res="https://testing-api-1.herokuapp.com/api/question/update?id=";
+		var res= sessionStorage.getItem('API')+"question/update?id=";
     	var urls = res.concat(id);
     	 $.ajax({
     		type : 'GET',
@@ -91,7 +92,11 @@
 				});  			
     		},
     		error : function(data) {				
-    			alert("Delete Failed!");
+    			swal({
+					title : data.responseJSON.message,
+					text : "",
+					icon : "error"
+				}); 
     		}
     });  
 		var $level = $('#btnlevel');
@@ -100,11 +105,11 @@
 			$('#btnsend').on('click',function(){
 				var check=0;
 				if($description.val()=="" || $level.val()=='base'){
-					alert('Please enter full information !');
+					swal("Please enter full information !","","error");
 				};
 				$.each(ids,function(i,v){
 					if($("#"+v).find("#btnanswer").val() =='base' || $("#"+v).find("#descriptionAnswer").val()=="" || $("#"+v).find("#content").val()=="" || $("#"+v).find("#answera").val()=="" || $("#"+v).find("#answerb").val()=="" || $("#"+v).find("#answerc").val()=="" || $("#"+v).find("#answerd").val()=="" ){
-						alert('Please enter full information in Details location '+i);
+						swal('Please enter full information in Details location '+i,"","error");
 						check +=1;
 					};
 				});
@@ -143,7 +148,7 @@
 					formData.append('audio',fileAudio);
 					 $.ajax({
 					type : 'POST',
-					url : 'https://testing-api-1.herokuapp.com/api/question/update',
+					url : sessionStorage.getItem('API')+'question/update',
 					beforeSend: function (xhr) {
 					    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 					},
@@ -152,11 +157,18 @@
 					processData: false,
 			        contentType: false,
 					success : function(data) {			
-						alert(data.message);
-						window.location.href = "http://localhost:8080/MultiChoose_02/home/question";
+						swal({
+							title : data.message,
+							text : "",
+							icon : "success"
+						}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/question"})
 					},
 					error : function(data) {				
-						alert("Create Failed !");
+						swal({
+							title : data.responseJSON.message,
+							text : "",
+							icon : "error"
+						}); 
 					}
 				}); 
 				};				

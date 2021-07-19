@@ -7,6 +7,7 @@
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <style>
 table {
 	font-family: arial, sans-serif;
@@ -38,7 +39,7 @@ tr:nth-child(even) {
 </head>
 <body>
 			<div class="card-page"><input type="number" id="myInput" onkeyup="myFunction()" placeholder="Search for ID Types.." title="Type in a name"></div>
-			<div class="card-page" id="fload">
+			<div class="card-page" id="fload" >
 				<table id="ftable">
 					<tr >
 						<th>ID</th>
@@ -57,7 +58,7 @@ tr:nth-child(even) {
 		
 		$.ajax({
 			type : 'GET',
-			url : 'https://testing-api-1.herokuapp.com/api/question/list',
+			url : sessionStorage.getItem('API')+'question/list',
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 			},
@@ -65,37 +66,60 @@ tr:nth-child(even) {
 				var trHTML = '';
 		        $.each(data, function (i, item) {
 		        	if(item.type.id == 5){
-		        		 trHTML += '<tr><td>' + item.id + '</td><td>'+ item.details[0].description + '</td><td>' + item.details[0].answer + '</td><td>'+ item.level + '</td><td>'+ item.type.name +'</td><td>'+ item.type.id +'</td><td><button id="btnupdate" class="btn btn-primary" >Update</button></td><td><button id="btndelete" class="btn btn-primary" >Delete</button></td></tr>';	      
+		        		 trHTML += '<tr><td>' + item.id + '</td><td>'+ item.details[0].description + '</td><td>' + item.details[0].answer + '</td><td>'+ item.level + '</td><td>'+ item.type.name +'</td><td>'+ item.type.id +'</td><td><button id="btnupdate" class="btn btn-primary" >Update</button></td><td><button id="btndelete" class="btn btn-primary" style="background-color: red" >Delete</button></td></tr>';	      
 		        	} else{
-		        		 trHTML += '<tr><td>' + item.id + '</td><td>'+ item.description + '</td><td>' + item.answer + '</td><td>'+ item.level + '</td><td>'+ item.type.name +'</td><td>'+ item.type.id +'</td><td><button id="btnupdate" class="btn btn-primary" >Update</button></td><td><button id="btndelete" class="btn btn-primary" >Delete</button></td></tr>';	      
+		        		 trHTML += '<tr><td>' + item.id + '</td><td>'+ item.description + '</td><td>' + item.answer + '</td><td>'+ item.level + '</td><td>'+ item.type.name +'</td><td>'+ item.type.id +'</td><td><button id="btnupdate" class="btn btn-primary" >Update</button></td><td><button id="btndelete" class="btn btn-primary" style="background-color: red" >Delete</button></td></tr>';	      
 		        	}	          
 		        });
 		        $('#ftable').append(trHTML);
 			},
-			error : function() {				
-				alert("Create Failed!");
+			error : function(data) {				
+				swal({
+					title : data.responseJSON.message,
+					text : "",
+					icon : "error"
+				}); 
+
 			}
 		});
 	});
 	$(document ).on("click","#ftable #btndelete",function() {
-	    let tr = $(this).closest('tr');
-	    let a = tr.find('td').eq(0).html(); 
-	    	var res="https://testing-api-1.herokuapp.com/api/question/delete/";
-	    	var urls = res.concat(a);
-	    	 $.ajax({
-	    		type : 'GET',
-	    		url : urls,
-	    		beforeSend: function (xhr) {
-				    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
-				},
-	    		success : function(data) {			
-	    			alert(data.message);
-	    			window.location.href = "http://localhost:8080/MultiChoose_02/home/question";
-	    		},
-	    		error : function(data) {				
-	    			alert("Delete Failed!");
-	    		}
-	    });  
+		swal({
+			title : "Are you sure you want to delete this question?",
+			text : "",
+			icon : "warning",
+			buttons : true,
+			dangerMode: true,
+		}).then((willDelete)=>{
+			if(willDelete){
+				let tr = $(this).closest('tr');
+			    let a = tr.find('td').eq(0).html(); 
+		    	var res= sessionStorage.getItem('API')+"question/delete/";
+		    	var urls = res.concat(a);
+		    	 $.ajax({
+		    		type : 'GET',
+		    		url : urls,
+		    		beforeSend: function (xhr) {
+					    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
+					},
+		    		success : function(data) {			
+		    			swal({
+							title : data.message,
+							text : "",
+							icon : "success"
+						}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/question"})
+		    		},
+		    		error : function(data) {				
+		    			swal({
+							title : data.responseJSON.message,
+							text : "",
+							icon : "error"
+						}); 
+
+		    		}
+		    });  
+			}
+		})	    
 	  });
 	$(document ).on("click","#ftable #btnupdate",function() {
 	    let tr = $(this).closest('tr');

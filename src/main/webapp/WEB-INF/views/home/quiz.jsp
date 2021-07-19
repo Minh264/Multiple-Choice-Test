@@ -31,6 +31,7 @@
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
   <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<style type="text/css">
     .form-label-left{
         width:150px;
@@ -84,17 +85,8 @@
        <li class="nav-item ">
           <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/index">Home</a>
         </li>
-        <li class="nav-item ">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/about">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/blog">Blog</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/updates">What's New</a>
-        </li>
          <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/favourite">Favourite List</a>
+          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/favorite">Favorite List</a>
         </li>
        <li class="nav-item" id="pageAdmin" style="display: none">
           <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/question">Admin</a>
@@ -244,15 +236,23 @@
 function favorite_click(id){
 	  $.ajax({
 			type : 'GET',
-			url : 'https://testing-api-1.herokuapp.com/api/question/savefavorite/'+id,
+			url : sessionStorage.getItem('API')+'question/savefavorite/'+id,
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 			},
 			success : function(data) {
-				alert(data.message);
+				swal({
+					title : data.message,
+					text : "",
+					icon : "success"
+				});
 			},
-			error : function() {				
-				alert("Create Failed!");
+			error : function(data) {				
+				 swal({
+						title : data.responseJSON.message,
+						text : "",
+						icon : "error"
+					}); 
 			}
 	  });
 }
@@ -275,7 +275,7 @@ $(document).ready(function() {
 	}
 	  $.ajax({
 		type : 'GET',
-		url : 'https://testing-api-1.herokuapp.com/api/test/'+id+'/start',
+		url : sessionStorage.getItem('API')+'test/'+id+'/start',
 		beforeSend: function (xhr) {
 		    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 		},
@@ -389,8 +389,13 @@ $(document).ready(function() {
 	        });
 	        $('#flist').append(trHTML);  
 		},
-		error : function() {				
-			alert("Load Failed!");
+		error : function(data) {				
+			swal({
+				title : data.responseJSON.message,
+				text : "",
+				icon : "error"
+			}); 
+
 		}
 	});  
 	$('#btnSend').on('click',function(){
@@ -443,7 +448,7 @@ $(document).ready(function() {
 		 });
 		 $.ajax({
 			type : 'POST',
-			url : 'https://testing-api-1.herokuapp.com/api/test/'+id+'/end',
+			url : sessionStorage.getItem('API')+'test/'+id+'/end',
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 			},
@@ -454,7 +459,12 @@ $(document).ready(function() {
 				window.location.href = "http://localhost:8080/MultiChoose_02/home/result=" + data.message;
 			},
 			error : function(data) {				
-				alert("Create Failed !");
+				swal({
+					title : data.responseJSON.message,
+					text : "",
+					icon : "error"
+				}); 
+
 			}
 		});  
 	});	

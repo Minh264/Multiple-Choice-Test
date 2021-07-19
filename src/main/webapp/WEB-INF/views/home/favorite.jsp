@@ -27,6 +27,7 @@
 <link rel="stylesheet" href="../assets/css/mobster.css">
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 <style>
 table {
 	font-family: arial, sans-serif;
@@ -72,13 +73,7 @@ tr:nth-child(even) {
 				<ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 					<li class="nav-item "><a class="nav-link" href="index">Home</a>
 					</li>
-					<li class="nav-item "><a class="nav-link" href="about">About</a>
-					</li>
-					<li class="nav-item"><a class="nav-link" href="blog">Blog</a>
-					</li>
-					<li class="nav-item"><a class="nav-link" href="updates">What's
-							New</a></li>
-					<li class="nav-item active"><a class="nav-link" href="favourite">Favourite
+					<li class="nav-item active"><a class="nav-link" href="favorite">Favorite
 							List</a></li>
 					<li class="nav-item" id="pageAdmin" style="display: none"><a class="nav-link" href="question">Admin</a>
 					</li>
@@ -97,7 +92,7 @@ tr:nth-child(even) {
 					<div
 						class="row justify-content-center align-items-center text-center h-100">
 						<div class="col-lg-6">
-							<h3 class="mb-4 fw-medium">Favourite List</h3>
+							<h3 class="mb-4 fw-medium">Favorite List</h3>
 							<nav aria-label="breadcrumb"></nav>
 						</div>
 					</div>
@@ -242,18 +237,22 @@ tr:nth-child(even) {
 			}
 							$.ajax({
 										type : 'GET',
-										url : 'https://testing-api-1.herokuapp.com/api/question/getfavorite',
+										url : sessionStorage.getItem('API')+'question/getfavorite',
 										beforeSend : function(xhr) {xhr.setRequestHeader('Authorization','Bearer '+ sessionStorage.getItem('accessToken'));
 										},
 										success : function(data) {
 											var trHTML = '';
 											 $.each(data,function(v,k){
-												trHTML += '<tr><td>'+ k.question.id+ '</td><td>'+ k.question.content+ '</td><td>'+ k.question.type.name+ '</td><td>'+ k.question.type.id+ '</td><td>'+ k.question.level+ '</td><td><button id="btnReview" class="btn btn-primary" >Review</button></td><td><button id="btnDelete" class="btn btn-primary" >Delete</button></td></tr>';
+												trHTML += '<tr><td>'+ k.question.id+ '</td><td>'+ k.question.content+ '</td><td>'+ k.question.type.name+ '</td><td>'+ k.question.type.id+ '</td><td>'+ k.question.level+ '</td><td><button id="btnReview" class="btn btn-primary" >Review</button></td><td><button id="btnDelete" class="btn btn-primary"  style="background-color: red">Delete</button></td></tr>';
 											});		 								
 										$('#ftable').append(trHTML);
 										},
-										error : function() {
-											alert("Load Failed!");
+										error : function(data) {
+											 swal({
+													title : data.responseJSON.message,
+													text : "",
+													icon : "error"
+												}); 
 										}
 									});
 						});
@@ -263,22 +262,39 @@ tr:nth-child(even) {
 			    window.location.href = "http://localhost:8080/MultiChoose_02/home/review/"+a;
 			  });
 		 $(document ).on("click","#ftable #btnDelete",function() {
-			    let tr = $(this).closest('tr');
-			    let a = tr.find('td').eq(0).html(); 		   
-			    $.ajax({
-			    	type:'GET',
-			    	url: 'https://testing-api-1.herokuapp.com/api/question/deletefavorite/'+a,
-			    	beforeSend : function(xhr) {
-			    		xhr.setRequestHeader('Authorization','Bearer '+ sessionStorage.getItem('accessToken'));
-					},
-					success: function(data){
-						alert(data.message);
-						window.location.href ="http://localhost:8080/MultiChoose_02/home/favourite";
-					},
-					error : function(){
-						alert("Delete Failed !");
+			 swal({
+					title : "Are you sure you want to delete this question?",
+					text : "",
+					icon : "warning",
+					buttons : true,
+					dangerMode: true,
+				}).then((willDelete)=>{
+					if(willDelete){
+						 let tr = $(this).closest('tr');
+						    let a = tr.find('td').eq(0).html(); 		   
+						    $.ajax({
+						    	type:'GET',
+						    	url: sessionStorage.getItem('API')+'question/deletefavorite/'+a,
+						    	beforeSend : function(xhr) {
+						    		xhr.setRequestHeader('Authorization','Bearer '+ sessionStorage.getItem('accessToken'));
+								},
+								success: function(data){
+									swal({
+										title : data.message,
+										text : "",
+										icon : "success"
+									}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/favorite"})
+								},
+								error : function(data){
+									 swal({
+											title : data.responseJSON.message,
+											text : "",
+											icon : "error"
+										}); 
+								}
+						    }); 
 					}
-			    });
+				})			   
 			  });
 	</script>
 	<script>

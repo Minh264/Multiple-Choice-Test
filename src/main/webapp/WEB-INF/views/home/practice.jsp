@@ -31,6 +31,7 @@
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
   <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<style type="text/css">
     .form-label-left{
         width:150px;
@@ -84,17 +85,8 @@
        <li class="nav-item ">
           <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/index">Home</a>
         </li>
-        <li class="nav-item ">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/about">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/blog">Blog</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/updates">What's New</a>
-        </li>
          <li class="nav-item">
-          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/favourite">Favourite List</a>
+          <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/favorite">Favorite List</a>
         </li>
        <li class="nav-item" id="pageAdmin" style="display: none">
           <a class="nav-link" href="http://localhost:8080/MultiChoose_02/home/question">Admin</a>
@@ -244,15 +236,23 @@
 function favorite_click(id){
 	  $.ajax({
 			type : 'GET',
-			url : 'https://testing-api-1.herokuapp.com/api/question/savefavorite/'+id,
+			url :  sessionStorage.getItem('API')+'question/savefavorite/'+id,
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 			},
 			success : function(data) {
-				alert(data.message);
+				swal({
+					title : data.message,
+					text : "",
+					icon : "success"
+				})
 			},
-			error : function() {				
-				alert("Create Failed!");
+			error : function(data) {				
+				 swal({
+						title : data.responseJSON.message,
+						text : "",
+						icon : "error"
+					}); 
 			}
 	  });
 }
@@ -276,7 +276,7 @@ $(document).ready(function() {
 	}
 	  $.ajax({
 		type : 'GET',
-		url : 'https://testing-api-1.herokuapp.com/api/test/'+id+'/start',
+		url : sessionStorage.getItem('API')+'test/'+id+'/start',
 		beforeSend: function (xhr) {
 		    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 		},
@@ -309,9 +309,9 @@ $(document).ready(function() {
 	        	};
 	        	if(item.type.id == 3){
 	        		var ldsDetail=[];
-	        		trHTML += '<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" > '+i+'. <audio controls> <source src='+ item.content +' type="audio/mpeg"></audio> </label><button style="font-size:24px; background-color: white; border: none; margin-left:20px; display:block" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button>';
+	        		trHTML += '<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" > '+i+'. <audio controls> <source src='+ item.content +' type="audio/mpeg"></audio> </label><button style="font-size:24px; background-color: white; border: none; margin-left:20px; display:block" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button" style="margin-left: 100px; width:100px; height:40px">Description</button>';
 	        		$.each(item.detail, function(v,k){
-	        			trHTML +='<div id="'+k.id+'" class="form-input-wide"><div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><label class="form-label form-label-top form-label-auto" style="margin-left :10px" >'+k.content+'</label><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'" value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_'+k.id+'_0">A. '+k.a+' </label> </span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1"  name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2"  name="'+k.id+'"  value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3"  name="'+k.id+'" value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div><button id="'+k.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button">Description</button>';
+	        			trHTML +='<div id="'+k.id+'" class="form-input-wide"><div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><label class="form-label form-label-top form-label-auto" style="margin-left :10px" >'+k.content+'</label><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'" value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_'+k.id+'_0">A. '+k.a+' </label> </span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1"  name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2"  name="'+k.id+'"  value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3"  name="'+k.id+'" value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div>';
 	        			ldsDetail.push(k.id);
 	        			  var strdes = {
 	  	        				id : item.id,
@@ -319,20 +319,20 @@ $(document).ready(function() {
 	  						detail : k.id,
 	  	        				description : k.description
 	  	        		};
+	        			 ldsDescription.push(strdes);
 	        		});	        		
 	        	    trHTML +='</li>';
 	        	    var stri ={
 	        	    		id : item.id,
 	        	    		detail : ldsDetail
 	        	    };
-	        	    ldsAnswerDetail.push(stri);	        	
-	        		ldsDescription.push(strdes);
+	        	    ldsAnswerDetail.push(stri);	        		        		
 	        	};
 	        	if(item.type.id == 4){
 	        		var ldsDetail=[];
-	        		trHTML += '<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" > '+i+'. <audio controls> <source src='+ item.content +' type="audio/mpeg"></audio> </label><button style="font-size:24px; background-color: white; border: none; margin-left:20px; display:block" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button>';
+	        		trHTML += '<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" > '+i+'. <audio controls> <source src='+ item.content +' type="audio/mpeg"></audio> </label><button style="font-size:24px; background-color: white; border: none; margin-left:20px; display:block" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button" style="margin-left: 100px; width:100px; height:40px">Description</button>';
 	        		$.each(item.detail, function(v,k){
-	        			trHTML +='<div id="'+k.id+'" class="form-input-wide"><div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><label class="form-label form-label-top form-label-auto" style="margin-left :10px" >'+k.content+'</label><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'" value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_'+k.id+'_0">A. '+k.a+' </label> </span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1"  name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2"  name="'+k.id+'"  value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3"  name="'+k.id+'" value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div><button id="'+k.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button">Description</button>';
+	        			trHTML +='<div id="'+k.id+'" class="form-input-wide"><div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><label class="form-label form-label-top form-label-auto" style="margin-left :10px" >'+k.content+'</label><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'" value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_'+k.id+'_0">A. '+k.a+' </label> </span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1"  name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2"  name="'+k.id+'"  value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3"  name="'+k.id+'" value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div>';
 	        			ldsDetail.push(k.id);
 	        			  var strdes = {
 	  	        				id : item.id,
@@ -340,14 +340,14 @@ $(document).ready(function() {
 	  						detail : k.id,
 	  	        				description : k.description
 	  	        		};
+	        			 ldsDescription.push(strdes);
 	        		});	        		
 	        	    trHTML +='</li>';
 	        	    var stri ={
 	        	    		id : item.id,
 	        	    		detail : ldsDetail
 	        	    };
-	        	    ldsAnswerDetail.push(stri);	        	   
-	        		ldsDescription.push(strdes);
+	        	    ldsAnswerDetail.push(stri);	        	    	   
 	        	};
 	        	 if(item.type.id == 5){
 	        		$.each(item.detail,function(v,k){
@@ -364,9 +364,9 @@ $(document).ready(function() {
 	        	};
 	        	if(item.type.id == 6){
 	        		var ldsDetail=[];
-	        		trHTML += '<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" > '+i+'. '+item.content+' </label><button style="font-size:24px; background-color: white; border: none; display: block" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button>';
+	        		trHTML += '<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" > '+i+'. '+item.content+' </label><button style="font-size:24px; background-color: white; border: none; display: block" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button" style="margin-left: 100px; width:100px; height:40px">Description</button>';
 	        		$.each(item.detail, function(v,k){
-	        			trHTML +='<div id="'+k.id+'" class="form-input-wide"><div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><label class="form-label form-label-top form-label-auto" style="margin-left :10px" >'+v+' </label><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'" value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_'+k.id+'_0">A. '+k.a+' </label> </span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1" name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2" name="'+k.id+'" value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3" name="'+k.id+'" value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button">Description</button>';
+	        			trHTML +='<div id="'+k.id+'" class="form-input-wide"><div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><label class="form-label form-label-top form-label-auto" style="margin-left :10px" >'+v+' </label><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'" value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_'+k.id+'_0">A. '+k.a+' </label> </span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1" name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2" name="'+k.id+'" value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3" name="'+k.id+'" value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div>';
 	        			ldsDetail.push(k.id);
 	        			var strdes = {
 		        				id : item.id,
@@ -385,9 +385,9 @@ $(document).ready(function() {
 	        	};
 	        	if(item.type.id == 7){
 	        		var ldsDetail=[];
-	        		trHTML += '<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" > '+i+'. <img style="width: 500px; height: 400px" src='+item.content+'> </label><button style="font-size:24px; background-color: white; border: none; display: block; margin-left: 70px" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button>';
+	        		trHTML += '<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" > '+i+'. <img style="width: 500px; height: 400px" src='+item.content+'> </label><button style="font-size:24px; background-color: white; border: none; display: block; margin-left: 70px" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button" style="margin-left: 100px; width:100px; height:40px">Description</button>';
 	        		$.each(item.detail, function(v,k){
-	        			trHTML +='<div id="'+k.id+'" class="form-input-wide"><div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><label class="form-label form-label-top form-label-auto" style="margin-left :10px" >'+k.content+'</label><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'" value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_'+k.id+'_0">A. '+k.a+' </label> </span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1" name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2" name="'+k.id+'" value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3" name="'+k.id+'"  value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button">Description</button>';
+	        			trHTML +='<div id="'+k.id+'" class="form-input-wide"><div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><label class="form-label form-label-top form-label-auto" style="margin-left :10px" >'+k.content+'</label><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'" value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_'+k.id+'_0">A. '+k.a+' </label> </span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1" name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2" name="'+k.id+'" value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3" name="'+k.id+'"  value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div>';
 	        			ldsDetail.push(k.id);
 	        			var strdes = {
 		        				id : item.id,
@@ -417,7 +417,7 @@ $(document).ready(function() {
 	        	};
 	        	if(item.type.id == 9){
 	        		$.each(item.detail,function(v,k){
-	        			trHTML +='<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" id="label_1" for="input_1">'+i+'. '+k.content+' </label><button style="font-size:24px; background-color: white; border: none; display: block ; margin-left: 30px" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button><div id="cid_1" class="form-input-wide"> <div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'"  value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_1_0">A. '+k.a+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1" name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2" name="'+k.id+'" value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3" name="'+k.id+'" value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button">Description</button><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button">Description</button></li> ';	        			
+	        			trHTML +='<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" id="label_1" for="input_1">'+i+'. '+k.content+' </label><button style="font-size:24px; background-color: white; border: none; display: block ; margin-left: 30px" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button><div id="cid_1" class="form-input-wide"> <div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'"  value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_1_0">A. '+k.a+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1" name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2" name="'+k.id+'" value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3" name="'+k.id+'" value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button">Description</button></li> ';	        			
 	        			var strdes = {
 		        				id : item.id,
 							type : item.type.id,
@@ -430,9 +430,9 @@ $(document).ready(function() {
 	        	};
 	        	if(item.type.id == 10){
 	        		var ldsDetail=[];
-	        		trHTML += '<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" > '+i+'. '+item.content+' </label><button style="font-size:24px; background-color: white; border: none; display: block" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button>';
+	        		trHTML += '<li class="form-line" data-type="control_radio" id='+item.id+'><label class="form-label form-label-top form-label-auto" > '+i+'. '+item.content+' </label><button style="font-size:24px; background-color: white; border: none; display: block" id='+item.id+' onClick="favorite_click(this.id)"><i class="fas fa-heart"></i></button><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button" style="margin-left: 100px; width:100px; height:40px">Description</button>';
 	        		$.each(item.detail, function(v,k){
-	        			trHTML +='<div id="'+k.id+'" class="form-input-wide"><div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><label class="form-label form-label-top form-label-auto" style="margin-left :10px" >'+v+'. '+k.content+' </label><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'" value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_'+k.id+'_0">A. '+k.a+' </label> </span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1" name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2" name="'+k.id+'" value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3" name="'+k.id+'" value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div><button id="'+item.id+'" type="submit" class="form-submit-button description-button jf-form-buttons jsTest-submitField" data-component="button">Description</button>';
+	        			trHTML +='<div id="'+k.id+'" class="form-input-wide"><div class="form-single-column" role="group" aria-labelledby="label_1" data-component="radio"><label class="form-label form-label-top form-label-auto" style="margin-left :10px" >'+v+'. '+k.content+' </label><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_0" name="'+k.id+'" value="A" data-calcvalue="0" /><label id="label_input_1_0" for="input_'+k.id+'_0">A. '+k.a+' </label> </span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_1" name="'+k.id+'" value="B" data-calcvalue="0" /><label id="label_input_1_1" for="input_'+k.id+'_1">B. '+k.b+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_2" name="'+k.id+'" value="C" data-calcvalue="0" /><label id="label_input_1_2" for="input_'+k.id+'_2">C. '+k.c+' </label></span><span class="form-radio-item" style="clear:left"><span class="dragger-item"></span><input type="radio" aria-describedby="label_1" class="form-radio" id="input_'+k.id+'_3" name="'+k.id+'" value="D" data-calcvalue="0" /><label id="label_input_1_3" for="input_'+k.id+'_3">D. '+k.d+' </label></span></div></div>';
 	        			ldsDetail.push(k.id);
 	        			var strdes = {
 		        				id : item.id,
@@ -467,23 +467,27 @@ $(document).ready(function() {
 	        });
 	        $('#flist').append(trHTML);  	             
 		},
-		error : function() {				
-			alert("Load Failed!");
+		error : function(data) {				
+			swal({
+				title : data.responseJSON.message,
+				text : "",
+				icon : "error"
+			}); 
 		}
-	}); 	 
+	});
 	  $(document).on("click",'#list .description-button ',function(){
 		  var descriptionid = this.id;
 		    $.each(ldsDescription,function(i,item){			   
-		    	if(item.type == 1 || item.type == 2 || item.type == 8 || item.type == 11 || item.type == 5 || item.type == 9){
+		    	 if(item.type == 1 || item.type == 2 || item.type == 8 || item.type == 11 || item.type == 5 || item.type == 9){
 		    		if(item.id == descriptionid){
 						$('#'+descriptionid).append('<label class="form-label form-label-top form-label-auto" style="color: red; margin-left: 50px" >'+item.description+' </label>');
 					};
-		    	};
-		    	/* if(item.type == 3 || item.type == 4 || item.type == 6 || item.type == 7 || item.type == 10){
+		    	}; 
+		    	if(item.type == 3 || item.type == 4 || item.type == 6 || item.type == 7 || item.type == 10){
 		    		if(item.id == descriptionid){
-						$('#'+descriptionid).('#'+item.detail).append('<label class="form-label form-label-top form-label-auto" style="color: red; margin-left: 50px" >'+item.description+' </label>');
+						$('#'+descriptionid).find('#'+item.detail).append('<label class="form-label form-label-top form-label-auto" style="color: red; padding-left: 50px" >'+item.description+' </label>');
 					}; 
-		    	}; */
+		    	}; 
 			});  
 	  });
 	$('#btnSend').on('click',function(){
@@ -536,7 +540,7 @@ $(document).ready(function() {
 		 });
 		 $.ajax({
 			type : 'POST',
-			url : 'https://testing-api-1.herokuapp.com/api/test/'+id+'/end',
+			url : sessionStorage.getItem('API')+'test/'+id+'/end',
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 			},
@@ -547,7 +551,11 @@ $(document).ready(function() {
 				window.location.href = "http://localhost:8080/MultiChoose_02/home/result=" + data.message;
 			},
 			error : function(data) {				
-				alert("Create Failed !");
+				swal({
+					title : data.responseJSON.message,
+					text : "",
+					icon : "error"
+				}); 
 			}
 		});  
 	});	

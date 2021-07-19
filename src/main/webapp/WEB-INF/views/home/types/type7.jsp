@@ -7,7 +7,7 @@
 
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	
+	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
 	<!-- Header -->
@@ -102,12 +102,12 @@
 			$('#btnsend').on('click',function(){
 				var check =0;
 				if($content.val()=="" || $description.val()=="" || $level.val()=='base' || $('#imagefile')[0].files[0]==null || $answer.val()=='base' || $descriptionAnswer.val()=="" || $contentAnswer.val()=="" || $answera.val()=="" || $answerb.val()=="" || $answerc.val()=="" || $answerd.val()==""){
-					alert("Please enter full information !");
+					swal("Please enter full information !","","error");
 				};
 				if(ids.length !=0){
 					$.each(ids,function(i,v){
 						if($('#'+v).find('#btnanswer').val()=='base' || $('#'+v).find('#descriptionAnswer').val()=="" || $('#'+v).find('#contentAnswer').val()=="" || $('#'+v).find('#answera').val()=="" || $('#'+v).find('#answerb').val()=="" || $('#'+v).find('#answerc').val() =="" || $('#'+v).find('#answerd').val()=="" ){
-							alert("Please enter full information in Details location "+i);
+							swal("Please enter full information in Details location "+i,"","error");
 							check +=1;
 						};
 					});
@@ -145,7 +145,7 @@
 					formData.append('photo',$('#imagefile')[0].files[0]);
 					$.ajax({
 					type : 'POST',
-					url : 'https://testing-api-1.herokuapp.com/api/question/type7',
+					url : sessionStorage.getItem('API')+'question/type7',
 					beforeSend: function (xhr) {
 					    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 					},
@@ -154,11 +154,18 @@
 					processData: false,
 			        contentType: false,
 					success : function(data) {			
-						alert(data.message);
-						window.location.href = "http://localhost:8080/MultiChoose_02/home/question";
+						swal({
+							title : data.message,
+							text : "",
+							icon : "success"
+						}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/question"})
 					},
 					error : function(data) {				
-						alert("Create Failed !");
+						swal({
+							title : data.responseJSON.message,
+							text : "",
+							icon : "error"
+						}); 
 					}
 				});
 				};				

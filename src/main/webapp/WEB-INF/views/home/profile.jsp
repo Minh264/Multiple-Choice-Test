@@ -24,6 +24,7 @@
 
   <link rel="stylesheet" href="../assets/css/mobster.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 <body>
 <!-- Header -->
@@ -42,13 +43,7 @@
 				<ul class="navbar-nav ml-auto mt-2 mt-lg-0">
 					<li class="nav-item "><a class="nav-link" href="index">Home</a>
 					</li>
-					<li class="nav-item "><a class="nav-link" href="about">About</a>
-					</li>
-					<li class="nav-item"><a class="nav-link" href="blog">Blog</a>
-					</li>
-					<li class="nav-item"><a class="nav-link" href="updates">What's
-							New</a></li>
-					<li class="nav-item"><a class="nav-link" href="favourite">Favourite
+					<li class="nav-item"><a class="nav-link" href="favorite">Favorite
 							List</a></li>
 					<li class="nav-item " id="pageAdmin" style="display: none"><a class="nav-link" href="question" >Admin</a>
 					</li>
@@ -87,14 +82,14 @@
         <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" alt="avatar" id="avatar">
         <h6>Upload a different photo...</h6>
         <input type="file" class="text-center center-block file-upload" id="fileavatar">
+        <button class="btn btn-primary" type="submit" id="btnSaveImage" style="margin-top:20px; background-color: gray;"> Save Avatar</button>
       </div><br>
 
           <ul class="list-group">
             <li class="list-group-item text-muted">History <i class="fa fa-dashboard fa-1x"></i></li>
-            <li class="list-group-item text-right"><span class="pull-left"><strong>Shares</strong></span> 125</li>
-            <li class="list-group-item text-right"><span class="pull-left"><strong>Likes</strong></span> 13</li>
-            <li class="list-group-item text-right"><span class="pull-left"><strong>Posts</strong></span> 37</li>
-            <li class="list-group-item text-right"><span class="pull-left"><strong>Followers</strong></span> 78</li>
+            <li class="list-group-item text-right"><span class="pull-left"><strong>Favorites </strong></span>8</li>
+            <li class="list-group-item text-right"><span class="pull-left"><strong>Score</strong></span> 13</li>
+            <li class="list-group-item text-right"><span class="pull-left"><strong>Test</strong></span> 37</li>          
           </ul> 
                
         </div><!--/col-3-->
@@ -119,25 +114,14 @@
                       <div class="form-group">                    
                           <div class="col-xs-6">
                               <label for="password"><h4>Password</h4></label>
-                              <input type="password" class="form-control" name="password" id="password" placeholder="password" title="enter your password.">
+                              <input type="password" class="form-control" name="password" id="password" placeholder="Enter password to edit Profile " title="enter your password.">
                           </div>
-                      </div>             
-                        <div class="form-group">                    
-                          <div class="col-xs-6">
-                              <label for="password"><h4>New Password</h4></label>
-                              <input type="password" class="form-control" name="password" id="newpassword" placeholder="password" title="enter your password.">
-                          </div>
-                      </div>     
-                      <div class="form-group">                    
-                          <div class="col-xs-6">
-                              <label for="password"><h4>Verify Password</h4></label>
-                              <input type="password" class="form-control" name="password" id="verifypassword" placeholder="password" title="enter your password.">
-                          </div>
-                      </div>            
+                      </div>                                         
                       <div class="form-group">
                            <div class="col-xs-12">
                                 <br>
-                              	<button class="btn btn-primary" type="submit" id="btnsave"> Save</button>                             	
+                              	<button class="btn btn-primary" type="submit" id="btnsave"> Save</button>     
+                              	<button class="btn btn-primary" type="submit" id="btnChangePass"> Change Password</button>                        	
                             </div>
                       </div>              
               <hr>
@@ -260,7 +244,7 @@
 		}
 		$.ajax({
 			type:'GET',
-			url:'https://testing-api-1.herokuapp.com/api/user/me',
+			url: sessionStorage.getItem('API')+'user/me',
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 			},
@@ -273,17 +257,24 @@
 					document.getElementById("avatar").src = data.photo;
 				} 
 			},
-			error : function() {
-				alert("Load Failed!");
+			error : function(data) {
+				swal({
+					title : data.responseJSON.message,
+					text : "",
+					icon : "error"
+				}); 
 			}
 		});
-		$('#btnsave').on('click',function(){
+		$('#btnChangePass').on('click',function(){
+			$('#home').load('changepw');
+		});
+		$('#btnSaveImage').on('click',function(){
 			if( $('#fileavatar')[0].files[0] != null){
 				var formData = new FormData();
 				formData.append('photo',$('#fileavatar')[0].files[0]);	
 				$.ajax({
 				type : 'POST',
-				url : 'https://testing-api-1.herokuapp.com/api/useravatar',
+				url : sessionStorage.getItem('API')+'useravatar',
 				beforeSend: function (xhr) {
 				    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 				},
@@ -291,15 +282,25 @@
 				cache: false,
 				processData: false,
 		        contentType: false,
-				success : function(data) {						
-					alert("Upload Avatar Success!");
-					window.location.href = "http://localhost:8080/MultiChoose_02/home/profile";
+				success : function(data) {
+					console.log(data);
+					swal({
+						title : "Change Avatar Success !",
+						text : "",
+						icon : "success"
+					}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/profile"})
 				},
-				error : function() {				
-					alert("Upload Avatar Failed!");
+				error : function(data) {				
+					swal({
+						title : data.responseJSON.message,
+						text : "",
+						icon : "error"
+					}); 
 				}
 				});
 			};	
+		});
+		$('#btnsave').on('click',function(){			
 			if( $('#password').val() != ""){
 				var values =  JSON.stringify({
 					name : $('#name').val(),
@@ -308,76 +309,31 @@
 			});
 			 $.ajax({
 			type : 'POST',
-			url : 'https://testing-api-1.herokuapp.com/api/user/updateProfile',
+			url : sessionStorage.getItem('API')+'user/updateProfile',
 			beforeSend: function (xhr) {
 			    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
 			},
 			data : values,
 			contentType: 'application/json',
 			success : function(data) {						
-				alert(data.message);
-				window.location.href = "http://localhost:8080/MultiChoose_02/home/profile";
+				swal({
+					title : data.message,
+					text : "",
+					icon : "success"
+				}).then(()=>{window.location.href = "http://localhost:8080/MultiChoose_02/home/profile"})
 			},
 			error : function(data) {	
-				console.log(data);
-				//alert("Your passowrd is incorrect !");
+				 swal({
+						title : data.responseJSON.message,
+						text : "",
+						icon : "error"
+					}); 
 			}
 			});  
-			};	
-			
-			var data =  JSON.stringify({
-				oldPassword : $('#password').val(),
-				newPassword : $('#newpassword').val()
-		});
-		 $.ajax({
-		type : 'POST',
-		url : 'https://testing-api-1.herokuapp.com/api/user/changepassword',
-		beforeSend: function (xhr) {
-		    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
-		},
-		data : data,
-		contentType: 'application/json',
-		success : function(data) {						
-			alert(data.message);
-			window.location.href = "http://localhost:8080/MultiChoose_02/home/profile";
-		},
-		error : function(data) {				
-			alert(data.message);
-		}
-		}); 
-			 /* if($('#password').val() != "" || $('#newpassword').val() !="" || $('#verifypassword').val() != ""){
-				if($('#password').val() != "" && $('#newpassword').val() !="" && $('#verifypassword').val() != "" ){
-					if( $('#newpassword').val() == $('#verifypassword').val()){
-						var data =  JSON.stringify({
-								oldPassword : $('#password').val(),
-								newPassword : $('#newpassword').val()
-						});
-						 $.ajax({
-						type : 'POST',
-						url : 'https://testing-api-1.herokuapp.com/api/user/changepassword',
-						beforeSend: function (xhr) {
-						    xhr.setRequestHeader('Authorization', 'Bearer '+sessionStorage.getItem('accessToken'));
-						},
-						data : data,
-						contentType: 'application/json',
-						success : function(data) {						
-							alert(data.message);
-							window.location.href = "http://localhost:8080/MultiChoose_02/home/profile";
-						},
-						error : function(data) {				
-							alert(data.message);
-						}
-						}); 
-					};
-					if( $('#newpassword').val() != $('#verifypassword').val()){
-						alert("Verify Password Failed!");
-					}					
-				};
-				if($('#password').val() == "" ||  $('#newpassword').val() =="" || $('#verifypassword').val() ==""  )
-					{
-						alert("Please Enter Your Password!");
-					}
-			};		 */
+			};
+			if($('#password').val() == ""){
+				swal("Please Enter Password !","","error");
+			}
 		});		
 	});
 </script>
